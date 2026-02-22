@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Create Activity{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Create Activity</h1>
+  <form method="post">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+    <label>Strategic Objective</label>
+    <select name="strategic_objective_id" required>
+      {% for s in sos %}
+        <option value="{{s.id}}">{{s.project.name}} — {{s.so_code}}: {{s.title}}</option>
+      {% endfor %}
+    </select>
+
+    <label>Link to Indicator (optional)</label>
+    <select name="indicator_id">
+      <option value="">— None —</option>
+      {% for i in indicators %}
+        <option value="{{i.id}}">{{ i.indicator_code }} — {{ i.statement[:80] }}{% if i.statement|length > 80 %}…{% endif %}</option>
+      {% endfor %}
+    </select>
+
+    <div class="grid">
+      <div>
+        <label>Activity Code (e.g., A1.1.1)</label>
+        <input name="activity_code">
+      </div>
+      <div>
+        <label>Status</label>
+        <select name="status">
+          <option value="planned">planned</option>
+          <option value="ongoing">ongoing</option>
+          <option value="completed">completed</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Title</label>
+    <input name="title" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4"></textarea>
+
+    <div class="grid">
+      <div>
+        <label>Date</label>
+        <input type="date" name="activity_date" required>
+      </div>
+      <div>
+        <label>Location</label>
+        <input name="location">
+      </div>
+    </div>
+
+    <button type="submit">Create</button>
+  </form>
+</div>
+{% endblock %}

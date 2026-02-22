@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ so.so_code }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>{{ so.so_code }} — {{ so.title }}</h1>
+    <div>
+      <a class="btn" href="/sos/{{so.id}}/edit">Edit</a>
+      <form method="post" action="/sos/{{so.id}}/delete" style="display:inline;">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+        <button style="background:#ef4444;" type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+  <p><b>Project:</b> {{ so.project.name }}</p>
+  <p><b>Description:</b> {{ so.description or "—" }}</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3>Indicators under this SO</h3>
+    <p><a href="/indicators/?so_id={{so.id}}">View indicators →</a></p>
+    <a class="btn" href="/indicators/create">+ Add Indicator</a>
+  </div>
+  <div class="card">
+    <h3>Activities under this SO</h3>
+    <p><a href="/activities/?so_id={{so.id}}">View activities →</a></p>
+    <a class="btn" href="/activities/create">+ Add Activity</a>
+  </div>
+</div>
+{% endblock %}

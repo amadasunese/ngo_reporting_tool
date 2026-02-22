@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Edit Activity{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Edit Activity</h1>
+  <form method="post">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+    <label>Strategic Objective</label>
+    <select name="strategic_objective_id" required>
+      {% for s in sos %}
+        <option value="{{s.id}}" {% if activity.strategic_objective_id==s.id %}selected{% endif %}>
+          {{s.project.name}} — {{s.so_code}}: {{s.title}}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label>Link to Indicator (optional)</label>
+    <select name="indicator_id">
+      <option value="">— None —</option>
+      {% for i in indicators %}
+        <option value="{{i.id}}" {% if activity.indicator_id==i.id %}selected{% endif %}>
+          {{ i.indicator_code }} — {{ i.statement[:80] }}{% if i.statement|length > 80 %}…{% endif %}
+        </option>
+      {% endfor %}
+    </select>
+
+    <div class="grid">
+      <div>
+        <label>Activity Code</label>
+        <input name="activity_code" value="{{activity.activity_code or ''}}">
+      </div>
+      <div>
+        <label>Status</label>
+        <select name="status">
+          <option value="planned" {% if activity.status=='planned' %}selected{% endif %}>planned</option>
+          <option value="ongoing" {% if activity.status=='ongoing' %}selected{% endif %}>ongoing</option>
+          <option value="completed" {% if activity.status=='completed' %}selected{% endif %}>completed</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Title</label>
+    <input name="title" value="{{activity.title}}" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4">{{activity.description or ""}}</textarea>
+
+    <div class="grid">
+      <div>
+        <label>Date</label>
+        <input type="date" name="activity_date" value="{{activity.activity_date}}" required>
+      </div>
+      <div>
+        <label>Location</label>
+        <input name="location" value="{{activity.location or ''}}">
+      </div>
+    </div>
+
+    <button type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

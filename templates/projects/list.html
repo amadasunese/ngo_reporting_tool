@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>Projects</h1>
+    <a class="btn" href="/projects/create">+ New Project</a>
+  </div>
+
+  {% if not projects %}
+    <p>No projects yet.</p>
+  {% else %}
+    <table>
+      <thead><tr><th>Name</th><th>Donor</th><th>Dates</th><th></th></tr></thead>
+      <tbody>
+        {% for p in projects %}
+          <tr>
+            <td><a href="/projects/{{p.id}}">{{ p.name }}</a></td>
+            <td>{{ p.donor or "—" }}</td>
+            <td>{{ p.start_date or "—" }} → {{ p.end_date or "—" }}</td>
+            <td><a href="/projects/{{p.id}}/edit">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

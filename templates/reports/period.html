@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Period Report{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Period Reach Report</h1>
+  <form method="get">
+    <label>Project</label>
+    <select name="project_id" required>
+      <option value="">Select…</option>
+      {% for p in projects %}
+        <option value="{{p.id}}" {% if project_id==p.id %}selected{% endif %}>{{p.name}}</option>
+      {% endfor %}
+    </select>
+
+    <div class="grid">
+      <div>
+        <label>Start</label>
+        <input type="date" name="start" value="{{ start or '' }}" required>
+      </div>
+      <div>
+        <label>End</label>
+        <input type="date" name="end" value="{{ end or '' }}" required>
+      </div>
+    </div>
+
+    <button type="submit">Generate</button>
+  </form>
+</div>
+
+{% if data %}
+  <div class="card">
+    <h2>{{ data.project.name }}</h2>
+    <p><b>Period:</b> {{ data.start }} to {{ data.end }}</p>
+  </div>
+
+  <div class="card">
+    <h3>Reach by Strategic Objective</h3>
+    {% if not data.so_summary %}
+      <p>No attendance found in this period.</p>
+    {% else %}
+      <table>
+        <thead><tr><th>SO</th><th>Title</th><th>Male</th><th>Female</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for r in data.so_summary %}
+            <tr>
+              <td>{{ r.so_code }}</td>
+              <td>{{ r.title }}</td>
+              <td>{{ r.male }}</td>
+              <td>{{ r.female }}</td>
+              <td><b>{{ r.total }}</b></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Reach by Indicator (from linked activities)</h3>
+    {% if not data.ind_summary %}
+      <p>No linked-indicator attendance found in this period.</p>
+    {% else %}
+      <table>
+        <thead><tr><th>Indicator</th><th>Statement</th><th>Male</th><th>Female</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for r in data.ind_summary %}
+            <tr>
+              <td>{{ r.code }}</td>
+              <td>{{ r.statement }}</td>
+              <td>{{ r.male }}</td>
+              <td>{{ r.female }}</td>
+              <td><b>{{ r.total }}</b></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+
+<div class="card">
+  <h3>Activities in Period</h3>
+  {% if not data.activities %}
+    <p>No activities found in this period.</p>
+  {% else %}
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+      <a class="btn" href="/reports/period/export/docx?project_id={{project_id}}&start={{start}}&end={{end}}">Export DOCX</a>
+      <a class="btn" href="/reports/period/export/xlsx?project_id={{project_id}}&start={{start}}&end={{end}}">Export XLSX</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th><th>Activity Code</th><th>Title</th><th>SO</th><th>Indicator</th>
+          <th>Status</th><th>Location</th><th>Male</th><th>Female</th><th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in data.activities %}
+          <tr>
+            <td>{{ a.date }}</td>
+            <td>{{ a.code or "—" }}</td>
+            <td>{{ a.title }}</td>
+            <td>{{ a.so_code }}</td>
+            <td>{{ a.indicator_code or "—" }}</td>
+            <td>{{ a.status }}</td>
+            <td>{{ a.location or "—" }}</td>
+            <td>{{ a.male }}</td>
+            <td>{{ a.female }}</td>
+            <td><b>{{ a.total }}</b></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endif %}
+{% endblock %}

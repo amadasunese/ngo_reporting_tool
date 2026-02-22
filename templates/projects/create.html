@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Create Project{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Create Project</h1>
+  <form method="post">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+    <label>Project Name</label>
+    <input name="name" required>
+
+    <label>Project Goal</label>
+    <textarea name="goal" rows="4" required></textarea>
+
+    <div class="grid">
+      <div>
+        <label>Donor</label>
+        <input name="donor">
+      </div>
+      <div>
+        <label>Location</label>
+        <input name="location">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label>Start Date</label>
+        <input type="date" name="start_date">
+      </div>
+      <div>
+        <label>End Date</label>
+        <input type="date" name="end_date">
+      </div>
+    </div>
+
+    <button type="submit">Create</button>
+  </form>
+</div>
+{% endblock %}

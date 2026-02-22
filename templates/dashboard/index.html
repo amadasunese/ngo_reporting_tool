@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div>
+      <h1 style="margin:0;">Dashboard</h1>
+      <p style="margin:6px 0 0; color:#6b7280;">
+        Projects → SOs → Indicators → Activities → Reach (M/F).
+      </p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn" href="/projects/create">+ New Project</a>
+      <a class="btn" href="/activities/create" style="background:#2563eb;">+ Log Activity</a>
+      <a class="btn" href="/reports/period">Period Report</a>
+    </div>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="grid">
+  <div class="card kpi">
+    <div class="kpi-label">Projects</div>
+    <div class="kpi-value">{{ stats.projects }}</div>
+    <div class="kpi-actions"><a href="/projects/">Open</a></div>
+  </div>
+
+  <div class="card kpi">
+    <div class="kpi-label">Strategic Objectives</div>
+    <div class="kpi-value">{{ stats.sos }}</div>
+    <div class="kpi-actions"><a href="/sos/">Open</a></div>
+  </div>
+
+  <div class="card kpi">
+    <div class="kpi-label">Indicators</div>
+    <div class="kpi-value">{{ stats.indicators }}</div>
+    <div class="kpi-actions"><a href="/indicators/">Open</a></div>
+  </div>
+
+  <div class="card kpi">
+    <div class="kpi-label">Activities</div>
+    <div class="kpi-value">{{ stats.activities }}</div>
+    <div class="kpi-sub">Completion: <b>{{ stats.completion_rate }}%</b></div>
+    <div class="kpi-actions"><a href="/activities/">Open</a></div>
+  </div>
+</div>
+
+<!-- REACH + MONTHLY CHART -->
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0;">Total Reach (Attendance)</h3>
+
+    <div class="reach-grid">
+      <div class="reach-box">
+        <div class="reach-label">Male</div>
+        <div class="reach-value">{{ stats.male }}</div>
+      </div>
+      <div class="reach-box">
+        <div class="reach-label">Female</div>
+        <div class="reach-value">{{ stats.female }}</div>
+      </div>
+      <div class="reach-box">
+        <div class="reach-label">Total</div>
+        <div class="reach-value">{{ stats.total_reach }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; color:#6b7280; font-size:13px;">
+      Planned: <b>{{ stats.status_counts.planned }}</b> ·
+      Ongoing: <b>{{ stats.status_counts.ongoing }}</b> ·
+      Completed: <b>{{ stats.status_counts.completed }}</b>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Monthly Reach (last 6 data months)</h3>
+    <div class="chart-wrap">
+      <canvas id="monthlyReachChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- SO REACH CHART -->
+<div class="card">
+  <h3 style="margin-top:0;">Reach by Strategic Objective (Top 10)</h3>
+  <div class="chart-wrap">
+    <canvas id="soReachChart"></canvas>
+  </div>
+</div>
+
+<!-- RECENTS -->
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0;">Recent Activities</h3>
+    {% if not recent_activities %}
+      <p>No activities logged yet.</p>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Code</th><th>Title</th><th>SO</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in recent_activities %}
+          <tr>
+            <td>{{ a.activity_date }}</td>
+            <td>{{ a.activity_code or "—" }}</td>
+            <td>{{ a.title }}</td>
+            <td>{{ a.strategic_objective.so_code }}</td>
+            <td>{{ a.status }}</td>
+            <td><a href="/activities/{{a.id}}">Open</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Latest Projects</h3>
+    {% if not recent_projects %}
+      <p>No projects yet.</p>
+    {% else %}
+      <ul style="margin:0; padding-left:18px;">
+        {% for p in recent_projects %}
+          <li style="margin:6px 0;">
+            <a href="/projects/{{p.id}}">{{ p.name }}</a>
+            <span style="color:#6b7280;">— {{ p.donor or "No donor set" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const soLabels = {{ charts.so_labels | tojson }};
+  const soMale   = {{ charts.so_male | tojson }};
+  const soFemale = {{ charts.so_female | tojson }};
+
+  const monthLabels = {{ charts.monthly_labels | tojson }};
+  const monthTotal  = {{ charts.monthly_total | tojson }};
+
+  new Chart(document.getElementById('monthlyReachChart'), {
+    type: 'line',
+    data: {
+      labels: monthLabels,
+      datasets: [{ label: 'Total Reach', data: monthTotal, tension: 0.3 }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+  });
+
+  new Chart(document.getElementById('soReachChart'), {
+    type: 'bar',
+    data: {
+      labels: soLabels,
+      datasets: [
+        { label: 'Male', data: soMale, stack: 'reach' },
+        { label: 'Female', data: soFemale, stack: 'reach' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+    }
+  });
+</script>
+{% endblock %}

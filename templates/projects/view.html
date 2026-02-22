@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>{{ project.name }}</h1>
+    <div>
+      <a class="btn" href="/projects/{{project.id}}/edit">Edit</a>
+      <form method="post" action="/projects/{{project.id}}/delete" style="display:inline;">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+        <button style="background:#ef4444;" type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <p><b>Goal:</b> {{ project.goal }}</p>
+  <p><b>Donor:</b> {{ project.donor or "—" }}</p>
+  <p><b>Location:</b> {{ project.location or "—" }}</p>
+  <p><b>Dates:</b> {{ project.start_date or "—" }} → {{ project.end_date or "—" }}</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3>Strategic Objectives</h3>
+    <a class="btn" href="/sos/create">+ Add SO</a>
+    <p style="margin-top:10px;"><a href="/sos/?project_id={{project.id}}">View SOs for this project →</a></p>
+  </div>
+  <div class="card">
+    <h3>Indicators</h3>
+    <a class="btn" href="/indicators/create">+ Add Indicator</a>
+    <p style="margin-top:10px;"><a href="/indicators/?project_id={{project.id}}">View Indicators for this project →</a></p>
+  </div>
+  <div class="card">
+    <h3>Activities</h3>
+    <a class="btn" href="/activities/create">+ Add Activity</a>
+    <p style="margin-top:10px;"><a href="/activities/?project_id={{project.id}}">View Activities for this project →</a></p>
+  </div>
+</div>
+{% endblock %}

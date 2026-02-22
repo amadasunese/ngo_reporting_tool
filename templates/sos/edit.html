@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Edit SO{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Edit Strategic Objective</h1>
+  <form method="post">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+    <label>Project</label>
+    <select name="project_id" required>
+      {% for p in projects %}
+        <option value="{{p.id}}" {% if so.project_id==p.id %}selected{% endif %}>{{p.name}}</option>
+      {% endfor %}
+    </select>
+
+    <label>SO Code</label>
+    <input name="so_code" value="{{so.so_code}}" required>
+
+    <label>Title</label>
+    <input name="title" value="{{so.title}}" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4">{{so.description or ""}}</textarea>
+
+    <button type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

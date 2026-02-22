@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Strategic Objectives{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>Strategic Objectives</h1>
+    <a class="btn" href="/sos/create">+ New SO</a>
+  </div>
+
+  <form method="get" style="margin-top:10px;">
+    <label>Filter by Project</label>
+    <select name="project_id" onchange="this.form.submit()">
+      <option value="">All Projects</option>
+      {% for p in projects %}
+        <option value="{{p.id}}" {% if project_id==p.id %}selected{% endif %}>{{p.name}}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if not sos %}
+    <p>No strategic objectives yet.</p>
+  {% else %}
+    <table style="margin-top:10px;">
+      <thead><tr><th>SO</th><th>Title</th><th>Project</th><th></th></tr></thead>
+      <tbody>
+        {% for s in sos %}
+          <tr>
+            <td><a href="/sos/{{s.id}}">{{ s.so_code }}</a></td>
+            <td>{{ s.title }}</td>
+            <td>{{ s.project.name }}</td>
+            <td><a href="/sos/{{s.id}}/edit">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

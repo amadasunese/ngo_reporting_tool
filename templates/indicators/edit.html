@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ indicator.indicator_code }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Edit Indicator</h1>
+  <form method="post">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+
+    <label>Strategic Objective (SO)</label>
+    <select name="strategic_objective_id" required>
+      {% for s in sos %}
+        <option value="{{s.id}}" {% if indicator.strategic_objective_id==s.id %}selected{% endif %}>
+          {{ s.project.name }} — {{ s.so_code }}: {{ s.title }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label>Indicator Code</label>
+    <input name="indicator_code" value="{{ indicator.indicator_code }}" required>
+
+    <label>Indicator Statement</label>
+    <textarea name="statement" rows="4" required>{{ indicator.statement }}</textarea>
+
+    <div class="grid">
+      <div>
+        <label>Indicator Type</label>
+        <select name="indicator_type">
+          <option value="" {% if not indicator.indicator_type %}selected{% endif %}>—</option>
+          <option value="Output" {% if indicator.indicator_type=="Output" %}selected{% endif %}>Output</option>
+          <option value="Outcome" {% if indicator.indicator_type=="Outcome" %}selected{% endif %}>Outcome</option>
+        </select>
+      </div>
+      <div>
+        <label>Unit of Measure</label>
+        <input name="unit" value="{{ indicator.unit or '' }}" placeholder="# persons / % / # sessions">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label>Baseline</label>
+        <input type="number" step="0.01" name="baseline" value="{{ indicator.baseline if indicator.baseline is not none else 0 }}">
+      </div>
+      <div>
+        <label>Target (optional)</label>
+        <input type="number" step="0.01" name="target" value="{{ indicator.target if indicator.target is not none else '' }}">
+      </div>
+    </div>
+
+    <label style="display:flex; gap:10px; align-items:center; margin-top:12px;">
+      <input type="checkbox" name="gender_disaggregation" {% if indicator.gender_disaggregation %}checked{% endif %}>
+      Gender disaggregation (Male/Female)
+    </label>
+
+    <button type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

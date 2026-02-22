@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>{% block title %}NGO Reporting Tool{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+
+<body class="app-layout">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>NGO Tool</h2>
+      <p>Reporting &amp; MEL</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard/" class="nav-item {% if request.path.startswith('/dashboard') %}active{% endif %}">📊 Dashboard</a>
+      <a href="/projects/" class="nav-item {% if request.path.startswith('/projects') %}active{% endif %}">📁 Projects</a>
+      <a href="/sos/" class="nav-item {% if request.path.startswith('/sos') %}active{% endif %}">🎯 Strategic Objectives</a>
+      <a href="/indicators/" class="nav-item {% if request.path.startswith('/indicators') %}active{% endif %}">📏 Indicators</a>
+      <a href="/activities/" class="nav-item {% if request.path.startswith('/activities') %}active{% endif %}">🗓 Activities</a>
+      <a href="/reports/" class="nav-item {% if request.path.startswith('/reports') %}active{% endif %}">📑 Reports</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-mini">
+        <div class="dot"></div>
+        <div>
+          <div class="mini-title">Status</div>
+          <div class="mini-sub">Ready</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashwrap">
+          {% for cat, msg in messages %}
+            <div class="flash {{cat}}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>

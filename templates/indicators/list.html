@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Indicators{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>Indicators</h1>
+    <a class="btn" href="/indicators/create">+ New Indicator</a>
+  </div>
+
+  <div class="grid" style="margin-top:10px;">
+    <form method="get">
+      <label>Filter by Project</label>
+      <select name="project_id" onchange="this.form.submit()">
+        <option value="">All Projects</option>
+        {% for p in projects %}
+          <option value="{{p.id}}" {% if project_id==p.id %}selected{% endif %}>{{p.name}}</option>
+        {% endfor %}
+      </select>
+      {% if so_id %}<input type="hidden" name="so_id" value="{{so_id}}">{% endif %}
+    </form>
+
+    <form method="get">
+      <label>Filter by Strategic Objective</label>
+      <select name="so_id" onchange="this.form.submit()">
+        <option value="">All SOs</option>
+        {% for s in sos %}
+          <option value="{{s.id}}" {% if so_id==s.id %}selected{% endif %}>
+            {{ s.project.name }} — {{ s.so_code }}: {{ s.title }}
+          </option>
+        {% endfor %}
+      </select>
+      {% if project_id %}<input type="hidden" name="project_id" value="{{project_id}}">{% endif %}
+    </form>
+  </div>
+
+  {% if not indicators %}
+    <p style="margin-top:10px;">No indicators yet.</p>
+  {% else %}
+    <table style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Statement</th>
+          <th>SO</th>
+          <th>Type</th>
+          <th>Unit</th>
+          <th>Baseline</th>
+          <th>Target</th>
+          <th>Gender</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in indicators %}
+          <tr>
+            <td><a href="/indicators/{{i.id}}">{{ i.indicator_code }}</a></td>
+            <td>{{ i.statement[:90] }}{% if i.statement|length > 90 %}…{% endif %}</td>
+            <td>{{ i.strategic_objective.so_code }}</td>
+            <td>{{ i.indicator_type or "—" }}</td>
+            <td>{{ i.unit or "—" }}</td>
+            <td>{{ i.baseline if i.baseline is not none else "—" }}</td>
+            <td>{{ i.target if i.target is not none else "—" }}</td>
+            <td>{{ "Yes" if i.gender_disaggregation else "No" }}</td>
+            <td><a href="/indicators/{{i.id}}/edit">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}
