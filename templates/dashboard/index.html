@@ -3,12 +3,10 @@
 
 {% block content %}
 <div class="card">
-  <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
     <div>
       <h1 style="margin:0;">Dashboard</h1>
-      <p style="margin:6px 0 0; color:#6b7280;">
-        Projects → SOs → Indicators → Activities → Reach (M/F).
-      </p>
+      <p style="margin:6px 0 0; color:#6b7280;">Quick overview of Projects → SOs → Indicators → Activities → Reach (M/F).</p>
     </div>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <a class="btn" href="/projects/create">+ New Project</a>
@@ -18,7 +16,6 @@
   </div>
 </div>
 
-<!-- KPI CARDS -->
 <div class="grid">
   <div class="card kpi">
     <div class="kpi-label">Projects</div>
@@ -46,11 +43,9 @@
   </div>
 </div>
 
-<!-- REACH + MONTHLY CHART -->
 <div class="grid">
   <div class="card">
     <h3 style="margin-top:0;">Total Reach (Attendance)</h3>
-
     <div class="reach-grid">
       <div class="reach-box">
         <div class="reach-label">Male</div>
@@ -67,9 +62,7 @@
     </div>
 
     <div style="margin-top:12px; color:#6b7280; font-size:13px;">
-      Planned: <b>{{ stats.status_counts.planned }}</b> ·
-      Ongoing: <b>{{ stats.status_counts.ongoing }}</b> ·
-      Completed: <b>{{ stats.status_counts.completed }}</b>
+      Planned: <b>{{ stats.status_counts.planned }}</b> · Ongoing: <b>{{ stats.status_counts.ongoing }}</b> · Completed: <b>{{ stats.status_counts.completed }}</b>
     </div>
   </div>
 
@@ -81,15 +74,16 @@
   </div>
 </div>
 
-<!-- SO REACH CHART -->
 <div class="card">
   <h3 style="margin-top:0;">Reach by Strategic Objective (Top 10)</h3>
   <div class="chart-wrap">
     <canvas id="soReachChart"></canvas>
   </div>
+  <p style="margin:10px 0 0; color:#6b7280; font-size:13px;">
+    Tip: reach is computed from activity attendance (Male/Female). If an SO has activities without attendance, it will show as 0.
+  </p>
 </div>
 
-<!-- RECENTS -->
 <div class="grid">
   <div class="card">
     <h3 style="margin-top:0;">Recent Activities</h3>
@@ -104,14 +98,14 @@
         </thead>
         <tbody>
           {% for a in recent_activities %}
-          <tr>
-            <td>{{ a.activity_date }}</td>
-            <td>{{ a.activity_code or "—" }}</td>
-            <td>{{ a.title }}</td>
-            <td>{{ a.strategic_objective.so_code }}</td>
-            <td>{{ a.status }}</td>
-            <td><a href="/activities/{{a.id}}">Open</a></td>
-          </tr>
+            <tr>
+              <td>{{ a.activity_date }}</td>
+              <td>{{ a.activity_code or "—" }}</td>
+              <td>{{ a.title }}</td>
+              <td>{{ a.strategic_objective.so_code }}</td>
+              <td>{{ a.status }}</td>
+              <td><a href="/activities/{{a.id}}">Open</a></td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -135,26 +129,41 @@
   </div>
 </div>
 
-<!-- Chart.js -->
+<!-- Chart.js (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-  const soLabels = {{ charts.so_labels | tojson }};
-  const soMale   = {{ charts.so_male | tojson }};
-  const soFemale = {{ charts.so_female | tojson }};
+  // Data injected from Flask
+  const soLabels  = {{ charts.so_labels | tojson }};
+  const soMale    = {{ charts.so_male | tojson }};
+  const soFemale  = {{ charts.so_female | tojson }};
+  const soTotal   = {{ charts.so_total | tojson }};
 
   const monthLabels = {{ charts.monthly_labels | tojson }};
   const monthTotal  = {{ charts.monthly_total | tojson }};
 
-  new Chart(document.getElementById('monthlyReachChart'), {
+  // Monthly reach line chart
+  const monthlyCtx = document.getElementById('monthlyReachChart');
+  new Chart(monthlyCtx, {
     type: 'line',
     data: {
       labels: monthLabels,
-      datasets: [{ label: 'Total Reach', data: monthTotal, tension: 0.3 }]
+      datasets: [{
+        label: 'Total Reach',
+        data: monthTotal,
+        tension: 0.3
+      }]
     },
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: { y: { beginAtZero: true } }
+    }
   });
 
-  new Chart(document.getElementById('soReachChart'), {
+  // SO reach stacked bar chart (Male/Female)
+  const soCtx = document.getElementById('soReachChart');
+  new Chart(soCtx, {
     type: 'bar',
     data: {
       labels: soLabels,
@@ -165,7 +174,11 @@
     },
     options: {
       responsive: true,
-      scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+      plugins: { legend: { display: true } },
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true }
+      }
     }
   });
 </script>

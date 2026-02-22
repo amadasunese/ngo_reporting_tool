@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Test Score Report{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+    <div>
+      <h1 style="margin:0;">Test Score Report</h1>
+      <p style="margin:6px 0 0; color:#6b7280;">Summary of knowledge gain (overall and optional gender disaggregation).</p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn" href="/testscore/">New Analysis</a>
+      <form method="post" action="/testscore/export/word" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Export DOCX</button>
+      </form>
+      <form method="post" action="/testscore/export/pdf" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Export PDF</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0;">Overall Summary</h3>
+    <table>
+      <tbody>
+        <tr><th>N</th><td>{{ overall.n }}</td></tr>
+        <tr><th>Mean Pre-test</th><td>{{ "%.2f"|format(overall.mean_pre) }}</td></tr>
+        <tr><th>Mean Post-test</th><td>{{ "%.2f"|format(overall.mean_post) }}</td></tr>
+        <tr><th>Mean Gain</th><td><b>{{ "%.2f"|format(overall.gain) }}</b></td></tr>
+        <tr><th>% Improvement</th><td>{{ "%.1f"|format(overall.pct_gain) }}%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Overall Chart</h3>
+    {% if overall_chart_path %}
+      <img src="{{ overall_chart_path }}" alt="Overall scores chart" style="max-width:100%; border-radius:12px; border:1px solid #f3f4f6;">
+    {% else %}
+      <p>No chart available.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if gender_rows %}
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0;">Gender Disaggregation</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Gender</th><th>N</th><th>Mean Pre</th><th>Mean Post</th><th>Gain</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in gender_rows %}
+          <tr>
+            <td>{{ r.gender }}</td>
+            <td>{{ r.n }}</td>
+            <td>{{ "%.2f"|format(r.mean_pre) }}</td>
+            <td>{{ "%.2f"|format(r.mean_post) }}</td>
+            <td><b>{{ "%.2f"|format(r.gain) }}</b></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Gender Chart</h3>
+    {% if gender_chart_path %}
+      <img src="{{ gender_chart_path }}" alt="Gender scores chart" style="max-width:100%; border-radius:12px; border:1px solid #f3f4f6;">
+    {% else %}
+      <p>No gender chart available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <h3 style="margin-top:0;">Narrative Interpretation</h3>
+  <div style="white-space:pre-line; line-height:1.6;">{{ narrative }}</div>
+</div>
+{% endblock %}

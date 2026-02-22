@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Test Score Analyzer - Help{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin:0;">Help</h1>
+  <p style="margin:6px 0 0; color:#6b7280;">How to use the Test Score Analyzer module.</p>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Dataset Format</h3>
+  <ul style="margin:0; padding-left:18px;">
+    <li><b>Required columns:</b> <code>pre_test</code>, <code>post_test</code></li>
+    <li><b>Optional:</b> <code>gender</code> (or <code>gend</code>) for disaggregation</li>
+    <li>Accepted file types: <b>.csv</b> or <b>.xlsx</b></li>
+  </ul>
+
+  <h3>Tips</h3>
+  <ul style="margin:0; padding-left:18px;">
+    <li>Keep scores numeric (e.g., 0–100).</li>
+    <li>Ensure pre/post rows match the same participants (no names required).</li>
+    <li>Use gender only if needed for reporting disaggregation.</li>
+  </ul>
+
+  <p style="margin-top:12px;">
+    <a class="btn" href="/testscore/">Start Analysis</a>
+    <a class="btn" href="/testscore/manual" style="margin-left:8px;">Download Manual</a>
+  </p>
+</div>
+{% endblock %}

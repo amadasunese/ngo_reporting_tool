@@ -38,3 +38,7 @@ Open:
 
 CSRF protection is enabled globally using `CSRFProtect`.
 All POST forms include a hidden `csrf_token`.
+
+## Dashboard charts
+
+Dashboard charts use Chart.js via CDN in `templates/dashboard/index.html`.

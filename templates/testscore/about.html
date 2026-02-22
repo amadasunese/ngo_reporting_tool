@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}About - Test Score Analyzer{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 style="margin:0;">About</h1>
+  <p style="margin:6px 0 0; color:#6b7280;">
+    The Test Score Analyzer helps quantify knowledge gain from training interventions using pre-test and post-test scores.
+  </p>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">What it does</h3>
+  <ul style="margin:0; padding-left:18px;">
+    <li>Calculates mean pre-test and post-test scores.</li>
+    <li>Computes average gain and percentage improvement.</li>
+    <li>Optionally disaggregates results by gender.</li>
+    <li>Generates DOCX and PDF reports for donor-style reporting.</li>
+  </ul>
+</div>
+{% endblock %}

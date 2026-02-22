@@ -5,6 +5,7 @@
   <title>{% block title %}NGO Reporting Tool{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block extra_head %}{% endblock %}
 </head>
 
 <body class="app-layout">
@@ -23,6 +24,7 @@
       <a href="/indicators/" class="nav-item {% if request.path.startswith('/indicators') %}active{% endif %}">📏 Indicators</a>
       <a href="/activities/" class="nav-item {% if request.path.startswith('/activities') %}active{% endif %}">🗓 Activities</a>
       <a href="/reports/" class="nav-item {% if request.path.startswith('/reports') %}active{% endif %}">📑 Reports</a>
+      <a href="/testscore/" class="nav-item {% if request.path.startswith('/testscore') %}active{% endif %}">🧪 Test Score Analyzer</a>
     </nav>
 
     <div class="sidebar-footer">
@@ -50,6 +52,8 @@
     {% endwith %}
 
     {% block content %}{% endblock %}
+
+    {% block extra_scripts %}{% endblock %}
   </main>
 
 </body>

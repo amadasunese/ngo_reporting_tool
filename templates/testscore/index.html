@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Test Score Analyzer{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1 style="margin:0;">Test Score Analyzer</h1>
+  <p style="margin:6px 0 0; color:#6b7280;">
+    Upload Pre-test and Post-test dataset (CSV/XLSX). Optional gender disaggregation supported.
+  </p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0;">Upload Dataset</h3>
+
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label>Dataset File (CSV or XLSX)</label>
+      <input type="file" name="dataset" accept=".csv,.xlsx" required>
+
+      <label>Disaggregate by Gender?</label>
+      <select name="disaggregate">
+        <option value="no" selected>No</option>
+        <option value="yes">Yes</option>
+      </select>
+
+      <button type="submit">Analyze Scores</button>
+    </form>
+
+    <div style="margin-top:14px; color:#6b7280; font-size:13px;">
+      <b>Required columns:</b> pre_test, post_test<br>
+      <b>Optional:</b> gender (or gend)
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Resources</h3>
+    <ul style="margin:0; padding-left:18px;">
+      <li><a href="/testscore/help">Help</a></li>
+      <li><a href="/testscore/about">About</a></li>
+      <li><a href="/testscore/manual">Download User Manual (PDF)</a></li>
+    </ul>
+    <p style="margin-top:10px; color:#6b7280; font-size:13px;">
+      This module is useful for trainings, sensitization sessions, workshops and learning events where you administer pre/post tests.
+    </p>
+  </div>
+</div>
+{% endblock %}
